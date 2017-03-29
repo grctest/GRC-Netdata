@@ -38,7 +38,7 @@ gridcoin_get() {
 	# 3. AVOID CALLING TOO MANY EXTERNAL PROGRAMS
 	# 4. USE LOCAL VARIABLES (global variables may overlap with other modules)
 
-	gridcoin_connections=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.connections')
+	gridcoin_connections=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
 	#gridcoin_powd=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.difficulty' | jq '."proof-of-work"')
 	#gridcoin_posd=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.difficulty' | jq '."proof-of-stake"')
 
@@ -71,10 +71,8 @@ gridcoin_create() {
 	# "random random" will likely need to be changed!
 	# WIKI FOR NEXT STEP: https://github.com/firehol/netdata/wiki/External-Plugins#chart
 	cat <<EOF
-CHART gridcoin.monitor '' "Monitoring GRC Connections and difficulties" connections connections2 stacked $((gridcoin_priority)) $gridcoin_update_every
-DIMENSION Connections '' absolute 1 1
-#DIMENSION Proof-of-Work-Difficulty '' percentage-of-absolute-row 1 1
-#DIMENSION Proof-of-Stake-Difficulty '' percentage-of-absolute-row 1 1
+CHART gridcoin.monitor '' "Monitoring GRC Connections and difficulties" "Connection Count" connections connections line $((example_priority)) $example_update_every
+DIMENSION connections connected absolute 1 1
 EOF
 
 	return 0
@@ -90,9 +88,7 @@ gridcoin_update() {
 	# write the result of the work.
 	cat <<VALUESEOF
 BEGIN gridcoin.monitor $1
-SET Connections = $gridcoin_connections
-#SET Proof-of-Work-Difficulty = $gridcoin_powd
-#SET Proof-of-Stake-Difficulty = $gridcoin_posd
+SET connections = $((gridcoin_connections))
 END
 VALUESEOF
 
