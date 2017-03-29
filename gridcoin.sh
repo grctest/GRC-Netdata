@@ -11,7 +11,7 @@
 
 # _update_every is a special variable - it holds the number of seconds
 # between the calls of the _update() function
-example_update_every=30
+example_update_every=5
 
 # the priority is used to sort the charts on the dashboard
 # 1 = the first chart
@@ -25,8 +25,8 @@ example_magic_number=12345
 # global variables to store our collected data
 # remember: they need to start with the module name example_
 example_connections=
-example_powd=
-example_posd=
+#example_powd=
+#example_posd=
 
 example_get() {
 	# do all the work to collect / calculate the values
@@ -38,9 +38,9 @@ example_get() {
 	# 3. AVOID CALLING TOO MANY EXTERNAL PROGRAMS
 	# 4. USE LOCAL VARIABLES (global variables may overlap with other modules)
 
-	example_connections==$(grc getinfo | jq '.connections')
-	example_powd==$(grc getinfo | jq '.difficulty' | jq '."proof-of-work"')
-	example_posd==$(grc getinfo | jq '.difficulty' | jq '."proof-of-stake"')
+	example_connections=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.connections')
+	#example_powd=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.difficulty' | jq '."proof-of-work"')
+	#example_posd=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getinfo | jq '.difficulty' | jq '."proof-of-stake"')
 
 	# this should return:
 	#  - 0 to send the data to netdata
@@ -71,10 +71,10 @@ example_create() {
 	# "random random" will likely need to be changed!
 	# WIKI FOR NEXT STEP: https://github.com/firehol/netdata/wiki/External-Plugins#chart
 	cat <<EOF
-CHART GRC.Monitor '' "Monitoring GRC Connections and difficulties" random random stacked $((example_priority)) $example_update_every
-DIMENSION Connections '' percentage-of-absolute-row 1 1
-DIMENSION Proof-of-Work-Difficulty '' percentage-of-absolute-row 1 1
-DIMENSION Proof-of-Stake-Difficulty '' percentage-of-absolute-row 1 1
+CHART gridcoin.monitor '' "Monitoring GRC Connections and difficulties" connections connections2 stacked $((example_priority)) $example_update_every
+DIMENSION Connections '' absolute 1 1
+#DIMENSION Proof-of-Work-Difficulty '' percentage-of-absolute-row 1 1
+#DIMENSION Proof-of-Stake-Difficulty '' percentage-of-absolute-row 1 1
 EOF
 
 	return 0
@@ -89,10 +89,10 @@ example_update() {
 
 	# write the result of the work.
 	cat <<VALUESEOF
-BEGIN GRC.Monitor $1
+BEGIN gridcoin.monitor $1
 SET Connections = $example_connections
-SET Proof-of-Work-Difficulty = $example_powd
-SET Proof-of-Stake-Difficulty = $example_posd
+#SET Proof-of-Work-Difficulty = $example_powd
+#SET Proof-of-Stake-Difficulty = $example_posd
 END
 VALUESEOF
 
