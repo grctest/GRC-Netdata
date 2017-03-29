@@ -24,9 +24,9 @@ example_magic_number=12345
 
 # global variables to store our collected data
 # remember: they need to start with the module name example_
-connections=
-powd=
-posd=
+example_connections=
+example_powd=
+example_posd=
 
 example_get() {
 	# do all the work to collect / calculate the values
@@ -38,9 +38,9 @@ example_get() {
 	# 3. AVOID CALLING TOO MANY EXTERNAL PROGRAMS
 	# 4. USE LOCAL VARIABLES (global variables may overlap with other modules)
 
-	connections==$(cat getinfo.json | jq '.connections')
-	powd==$(cat getinfo.json | jq '.difficulty' | jq '."proof-of-work"')
-	posd==$(cat getinfo.json | jq '.difficulty' | jq '."proof-of-stake"')
+	example_connections==$(grc getinfo | jq '.connections')
+	example_powd==$(grc getinfo | jq '.difficulty' | jq '."proof-of-work"')
+	example_posd==$(grc getinfo | jq '.difficulty' | jq '."proof-of-stake"')
 
 	# this should return:
 	#  - 0 to send the data to netdata
@@ -90,9 +90,9 @@ example_update() {
 	# write the result of the work.
 	cat <<VALUESEOF
 BEGIN GRC.Monitor $1
-SET Connections = $connections
-SET Proof-of-Work-Difficulty = $powd
-SET Proof-of-Stake-Difficulty = $posd
+SET Connections = $example_connections
+SET Proof-of-Work-Difficulty = $example_powd
+SET Proof-of-Stake-Difficulty = $example_posd
 END
 VALUESEOF
 
