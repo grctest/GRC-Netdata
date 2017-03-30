@@ -7,7 +7,7 @@
 #
 
 gridcoin_update_every=5
-load_priority=1
+load_priority=100
 
 # this is an example charts.d collector
 # it is disabled by default.
@@ -34,36 +34,24 @@ gridcoin_check() {
 gridcoin_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.load '' "System Load Average" "load" load system.load line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION connection 'connections' absolute 1 1
-CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" block gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
-DIMENSION blocks 'blocks' absolute 1 1
-DIMENSION moneysupply 'connections' absolute 1 1
-CHART gridcoin.money '' "Gridcoin moneysupply" "coins" block gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
-DIMENSION moneysupply 'coins' absolute 1 1
 EOF
 
         return 0
 }
 
 gridcoin_update() {
-        connections=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
-        blocks=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.blocks')
-        moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')
+        grc=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
         # grc=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
         #load1=$(grc getinfo | jq '.connections')
         # write the result of the work.
         cat <<VALUESEOF
-BEGIN gridcoin.connection
-SET connection = $connections
-END
-BEGIN gridcoin.blocks
-SET blocks = $blocks
-END
-BEGIN gridcoin.money
-SET moneysupply = $moneysupply
+BEGIN gridcoin.load
+SET connection = $grc
 END
 VALUESEOF
 
         return 0
 }
+
