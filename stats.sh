@@ -1,8 +1,8 @@
 # node-stats function
 function node-stats {
    #echo "Gridcoin client running. Creating files!"
-
-	grc getinfo > /home/gridcoin/.GridcoinResearch/getinfo.json
+    grc getinfo > /home/gridcoin/.GridcoinResearch/getinfo.json
+    grc getstakinginfo > /home/gridcoin/.GridcoinResearch/getstakinginfo.json
     grc getdifficulty > /home/gridcoin/.GridcoinResearch/difficulty.json
 
     #echo "Moving files"

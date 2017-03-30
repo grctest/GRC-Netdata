@@ -43,6 +43,8 @@ DIMENSION moneysupply 'coins' absolute 1 1
 CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" block gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION difficultypos 'pos' absolute 1 1
 DIMENSION difficultypow 'pow' absolute 1 1
+CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" block gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
+DIMENSION stakeweight 'stake_weight' absolute 1 1
 EOF
 
         return 0
@@ -54,6 +56,7 @@ gridcoin_update() {
         moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')
         difficulty_pow=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-work\")
         difficulty_pos=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-stake\")
+        staking_weight=$(cat /home/gridcoin/.GridcoinResearch/getstakinginfo.json | jq '.netstakeweight')
         # grc=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
         #load1=$(grc getinfo | jq '.connections')
         # write the result of the work.
@@ -70,6 +73,9 @@ END
 BEGIN gridcoin.difficulty
 SET difficultypos = $difficulty_pos
 SET difficultypow = $difficulty_pow
+END
+BEGIN gridcoin.stake_weight
+SET stakeweight = $staking_weight
 END
 VALUESEOF
 
