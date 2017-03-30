@@ -38,7 +38,6 @@ CHART gridcoin.connection '' "Gridcoin client connections" "connections" connect
 DIMENSION connection 'connections' absolute 1 1
 CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" block gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION blocks 'blocks' absolute 1 1
-DIMENSION moneysupply 'connections' absolute 1 1
 CHART gridcoin.money '' "Gridcoin moneysupply" "coins" block gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION moneysupply 'coins' absolute 1 1
 CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" block gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
