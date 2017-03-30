@@ -11,3 +11,11 @@ Netdata charts for Gridcoin
 * Edit the file "/etc/netdata/charts.d.conf" and set both 'enable_all_charts="yes"' and 'gridcoin="yes"'
 * Execute "killall netdata" then "netdata"
 * Navigate to IP:19999 and your Gridcoin charts should be shown!
+
+# Screenshot
+
+![Screenshot](https://i.imgur.com/UZjKQE5.png)
+
+# Got ideas/suggestions for improvements?
+
+Please do raise a GitHub issue, bonus points for pull requests!
