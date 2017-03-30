@@ -1,6 +1,10 @@
 # GRC-Netdata
 Netdata charts for Gridcoin
 
+# Prereqs
+
+Install 'jq'
+
 # Installation guide
 
 * This has only been tested on Ubuntu

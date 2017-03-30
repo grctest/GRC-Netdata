@@ -36,14 +36,14 @@ gridcoin_create() {
 cat <<EOF
 CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION connection 'connections' absolute 1 1
-CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" block gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION blocks 'blocks' absolute 1 1
-CHART gridcoin.money '' "Gridcoin moneysupply" "coins" block gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.money '' "Gridcoin coinsupply" "coins" Coinsupply gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION moneysupply 'coins' absolute 1 1
-CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" block gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulies gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION difficultypos 'pos' absolute 1 1
 DIMENSION difficultypow 'pow' absolute 1 1
-CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" block gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" Stake_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION stakeweight 'stake_weight' absolute 1 1
 EOF
 
