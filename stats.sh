@@ -3,6 +3,7 @@ function node-stats {
    #echo "Gridcoin client running. Creating files!"
 
     grc getinfo > /usr/share/netdata/web/getinfo.json
+    grc getdifficulty > /home/gridcoin/.GridcoinResearch/difficulty.json
 
     #echo "Moving files"
     # \cp getinfo.json /usr/share/netdata/web/
@@ -28,7 +29,7 @@ else
 fi
 
 # Start this script with the following:
-# nohup bash stats.sh &
+# source ./stats.sh >/dev/null 2>&1 < /dev/null &
 
 # crontab -e
 # @reboot source ./stats.sh >/dev/null 2>&1 < /dev/null &
