@@ -40,7 +40,7 @@ CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $
 DIMENSION blocks 'blocks' absolute 1 1
 CHART gridcoin.money '' "Gridcoin coinsupply" "coins" Coinsupply gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION moneysupply 'coins' absolute 1 1
-CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulies gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION difficultypos 'pos' absolute 1 1
 DIMENSION difficultypow 'pow' absolute 1 1
 CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" Stake_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
