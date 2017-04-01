@@ -36,6 +36,8 @@ data GetPeerInfo = GetPeerInfo { subver :: String
                                  , nTrust :: Int
                                  } deriving (Show, Generic, Eq)
 
+data ListInputTypes = InBound | StartingHeight | Trust | SubVer
+
 instance ToJSON GetPeerInfo where
     toEncoding = genericToEncoding defaultOptions
 
@@ -63,19 +65,6 @@ instance FromJSON GetPeerInfo
 -- | Specify the filename of the JSON file we want to import
 jsonFile :: Prelude.FilePath
 jsonFile = "getpeerinfo.json"
-
--- | Specifying the filepath of the text file we want to write to
--- Users need to modify this to suit their gridcoin installation.
-outputFileVersions :: Prelude.FilePath
-outputFileVersions = "peerinfo_versions.txt"
-
--- | File path for output file containing peer starting heights
-outputFileHeight :: Prelude.FilePath
-outputFileHeight = "peerinfo_height.txt"
-
--- | File path for output file containing peer trust 
-outputFileTrust :: Prelude.FilePath
-outputFileTrust = "peerinfo_trust.txt"
 
 -- | Full JSON data in, list of subver out
 jsonToSubVerList :: [GetPeerInfo] -> [SubVer]
@@ -108,15 +97,15 @@ jsonToBoundList (x:xs) = do
 countIt :: Eq a => a -> [a] -> Int
 countIt x = length . filter (x==)
 
-countedList :: [a] -> [a] ->  [(a, Int)]
+countedList :: [ListInputTypes] -> [ListInputTypes] ->  [(ListInputTypes, Int)]
 countedList [] referenceList = []
 countedList (x:xs) referenceList = do
     let countedVal = (countIt x referenceList)
-    [(x, countedVal)]
+    [(x, countedVal)] ++ countedList xs referenceList
 
 -- | Writing the contents of each element of the list to file
 -- Input the list of touples output by countedList
-outputCountedList :: [(a, Int)] -> Prelude.FilePath -> IO ()
+outputCountedList :: [(ListInputTypes, Int)] -> Prelude.FilePath -> IO ()
 outputCountedList (x:xs) txtFilePath = do
     let contents = T.pack((fst x) ++ " " ++ (show (snd x)))
 
@@ -173,7 +162,7 @@ main = do
 
     -- | Writing data to text files
     -- Counted lists (frequency of occurrence)
-    outputCountedList sVList versions_filepath 
+    outputCountedList (countedList sVList) versions_filepath 
     --outputCountedList nTList trust_filepath --Trust could be totaled or averaged, perhaps better than 200 lines (less resource hungry)
     --outputCountedList ibList bound_filepath 
 
