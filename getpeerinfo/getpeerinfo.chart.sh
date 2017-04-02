@@ -20,11 +20,11 @@ gridcoin_getpeerinfo_check() {
 	#  - 0 to enable the chart
 	#  - 1 to disable the chart
 
-	if [ ${gridcoin_getpeerinfo_update_every} -lt 5 ]
+	if [ ${gridcoin_getpeerinfo_update_every} -lt 10 ]
 		then
 		# there is no meaning for shorter than 5 seconds
 		# the kernel changes this value every 5 seconds
-		gridcoin_getpeerinfo_update_every=5
+		gridcoin_getpeerinfo_update_every=10
 	fi
 
 	[ ${gridcoin_getpeerinfo_enabled} -eq 0 ] && return 1
@@ -34,47 +34,27 @@ gridcoin_getpeerinfo_check() {
 gridcoin_getpeerinfo_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
-while read name
+CHART GRC.PeerVersions '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
+while read data
 do
-    test="$name"
-    stringarray=($test)
-    echo ${stringarray[0]}
-    echo ${stringarray[1]}
+    currentLine="$data"
+    stringarray=($currentLine)
+    echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
 done < peerinfo_versions.txt
-DIMENSION difficultypos 'pos' absolute 1 1
-DIMENSION difficultypow 'pow' absolute 1 1
 EOF
 
         return 0
 }
 
 gridcoin_getpeerinfo_update() {
-        connections=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
-        blocks=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.blocks')
-        moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')
-        difficulty_pow=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-work\")
-        difficulty_pos=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-stake\")
-        staking_weight=$(cat /home/gridcoin/.GridcoinResearch/getstakinginfo.json | jq '.netstakeweight')
-        # grc=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
-        #load1=$(grc getinfo | jq '.connections')
         # write the result of the work.
         cat <<VALUESEOF
-BEGIN gridcoin.connection
-SET connection = $connections
-END
-BEGIN gridcoin.blocks
-SET blocks = $blocks
-END
-BEGIN gridcoin.money
-SET moneysupply = $moneysupply
-END
-BEGIN gridcoin.difficulty
-SET difficultypos = $difficulty_pos
-SET difficultypow = $difficulty_pow
-END
-BEGIN gridcoin.stake_weight
-SET stakeweight = $staking_weight
+BEGIN GRC.PeerVersions
+do
+    currentLine="$data"
+    stringarray=($currentLine)
+    echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
+done < peerinfo_versions.txt
 END
 VALUESEOF
 

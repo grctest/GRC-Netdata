@@ -177,7 +177,9 @@ main = do
     -- | Empty the contents of the existing files!
     -- -n to prevent adding an empty line to the file
     shell "echo -n '' > peerinfo_versions.txt" Turtle.empty
+    shell "echo -n '' > avg_peerinfo_trust.txt" Turtle.empty
     shell "echo -n '' > peerinfo_trust.txt" Turtle.empty
+    shell "echo -n '' > avg_peerinfo_height.txt" Turtle.empty
     shell "echo -n '' > peerinfo_height.txt" Turtle.empty
     shell "echo -n '' > peerinfo_bound.txt" Turtle.empty
 
