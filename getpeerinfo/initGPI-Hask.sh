@@ -1,3 +1,5 @@
+#!/usr/bin/env runhaskell
+
 # node-stats function
 function initialize-haskell-script {
    ./getpeerinfo.hs
