@@ -148,7 +148,7 @@ outputUnorderedList (x:xs) txtFilePath = do
             outputUnorderedList xs txtFilePath -- Does appendFile cut off the next line from running? Might need to switch for shell!
 
 -- | Main function that is called from prelude!
-main :: IO ()
+main :: IO ExitCode
 main = do
 
     -- | Empty the contents of the existing files!
