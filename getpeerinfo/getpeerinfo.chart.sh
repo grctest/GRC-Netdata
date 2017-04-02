@@ -6,51 +6,61 @@
 # GPL v3+
 #
 
-gridcoin_update_every=5
+gridcoin_getpeerinfo_update_every=5
 load_priority=1
 
 # this is an example charts.d collector
 # it is disabled by default.
 # there is no point to enable it, since netdata already
 # collects this information using its internal plugins.
-gridcoin_enabled=1
+gridcoin_getpeerinfo_enabled=1
 
-gridcoin_check() {
+gridcoin_getpeerinfo_check() {
 	# this should return:
 	#  - 0 to enable the chart
 	#  - 1 to disable the chart
 
-	if [ ${gridcoin_update_every} -lt 5 ]
+	if [ ${gridcoin_getpeerinfo_update_every} -lt 5 ]
 		then
 		# there is no meaning for shorter than 5 seconds
 		# the kernel changes this value every 5 seconds
-		gridcoin_update_every=5
+		gridcoin_getpeerinfo_update_every=5
 	fi
 
-	[ ${gridcoin_enabled} -eq 0 ] && return 1
+	[ ${gridcoin_getpeerinfo_enabled} -eq 0 ] && return 1
 	return 0
 }
 
-gridcoin_create() {
+
+while read name
+do
+    test="$name"
+    stringarray=($test)
+    echo ${stringarray[0]}
+    echo ${stringarray[1]}
+done < peerinfo_versions.txt
+
+
+gridcoin_getpeerinfo_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION connection 'connections' absolute 1 1
-CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION blocks 'blocks' absolute 1 1
-CHART gridcoin.money '' "Gridcoin coinsupply" "coins" Coinsupply gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.money '' "Gridcoin coinsupply" "coins" Coinsupply gridcoin.money line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION moneysupply 'coins' absolute 1 1
-CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION difficultypos 'pos' absolute 1 1
 DIMENSION difficultypow 'pow' absolute 1 1
-CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" Stake_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" Stake_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION stakeweight 'stake_weight' absolute 1 1
 EOF
 
         return 0
 }
 
-gridcoin_update() {
+gridcoin_getpeerinfo_update() {
         connections=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
         blocks=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.blocks')
         moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')

@@ -2,28 +2,33 @@
 
 {-# LANGUAGE DeriveAnyClass, DeriveGeneric, OverloadedStrings, ScopedTypeVariables #-}
 
+-- | Importing qualified packages
 import qualified Data.ByteString.Lazy as DBL
 import qualified Data.Text as T
 import qualified Data.HashMap.Strict as HM
 
+-- | Importing further Haskell packages
 import Control.Applicative ((<$>))
-import Data.Aeson
+import Data.Aeson -- You need to install this (cabal install aeson)
 import Data.Aeson.Types
 import Data.List
 import Data.Maybe
 import GHC.Generics
-import Turtle
+import Turtle -- You need to install this (cabal install turtle)
 
 -- | Declaring fancy types
 -- Not neccessary, but makes interpretation of the script easier.
 type InBound_or_SubVer = String
 type StartingHeight_or_Trust = Int
+type Counter = Int
 
 -- | Global variables
 -- Change these filepath values at your discretion
 versions_filepath = "peerinfo_versions.txt"
 trust_filepath = "peerinfo_trust.txt"
+avg_trust_filepath = "avg_peerinfo_trust.txt"
 height_filepath = "peerinfo_height.txt"
+avg_height_filepath = "avg_peerinfo_height.txt"
 bound_filepath = "peerinfo_bound.txt"
 
 -- | Configuring Aeson to handle the getpeerinfo.json fields
@@ -110,19 +115,21 @@ jsonToBoundList (x:xs) = do
 countIt :: Eq a => a -> [a] -> Int
 countIt x = length . filter (x==)
 
+-- | Counting the occurrence of unique list elements within a non-unique list
 countedList :: [InBound_or_SubVer] -> [InBound_or_SubVer] ->  [(InBound_or_SubVer, Int)]
 countedList [] referenceList = []
 countedList (x:xs) referenceList = do
     let countedVal = (countIt x referenceList)
-    -- | Input current 
+    -- | Input current countedVal, recursively call function with the tail of the input list.
     [(x, countedVal)] ++ countedList xs referenceList
 
 -- | Writing the contents of each element of the list to file
 -- Input the list of touples output by countedList
-outputCountedList :: [(InBound_or_SubVer, Int)] -> Prelude.FilePath -> IO ExitCode
-outputCountedList (x:xs) txtFilePath = do
+outputCountedList :: [(InBound_or_SubVer, Int)] -> Prelude.FilePath -> Counter -> IO ExitCode
+outputCountedList (x:xs) txtFilePath counter = do
     --let contents = T.pack((fst x) ++ " " ++ (show (snd x)))
-    let contents = ((fst x)) ++ " " ++ (show (snd x))
+    let dimension = "Dimension" ++ (show counter)
+    let contents = dimension ++ " " ++ ((fst x)) ++ " " ++ (show (snd x))
     --print contents
     -- | How to catch empty xs when the output is IO?
     -- Perhaps worth trying "outputCountedList [] txtFilePath = []" for less code reuse
@@ -133,8 +140,10 @@ outputCountedList (x:xs) txtFilePath = do
         else do
             shell (T.pack ("echo '" ++ contents ++ "' >> " ++ txtFilePath)) Turtle.empty
             --(appendFile txtFilePath contents) -- Does appendFile cut off the next line from running? Might need to switch for shell!
-            outputCountedList xs txtFilePath
+            outputCountedList xs txtFilePath (counter + 1)
 
+-- | Outputting the contents of the list to a text file
+-- This isn't actually that useful, as we can't/shouldn't have 200+ lines within a graph!
 outputUnorderedList :: [StartingHeight_or_Trust] -> Prelude.FilePath -> IO ExitCode
 outputUnorderedList (x:xs) txtFilePath = do
     --print x
@@ -146,6 +155,20 @@ outputUnorderedList (x:xs) txtFilePath = do
         else do
             shell (T.pack ("echo '" ++ (show x) ++ "' >> " ++ txtFilePath)) Turtle.empty
             outputUnorderedList xs txtFilePath -- Does appendFile cut off the next line from running? Might need to switch for shell!
+
+-- | Outputting the average of a list of values
+-- Used for outputting average starting block height & trust levels
+outputAvgValues :: [StartingHeight_or_Trust] -> Prelude.FilePath -> IO ExitCode
+outputAvgValues inputList txtFilePath = do
+    let listTotal = foldl (+) 0 inputList
+    let quantityElementsInList = countList inputList 0
+    let avgVal = listTotal`div`quantityElementsInList
+    shell (T.pack ("echo '" ++ (show avgVal) ++ "' >> " ++ txtFilePath)) Turtle.empty
+
+-- | Counting the elements within a given list
+countList :: [StartingHeight_or_Trust] -> Counter -> Int
+countList [] counterVal = counterVal
+countList (x:xs) counterVal = countList xs (counterVal + 1) 
 
 -- | Main function that is called from prelude!
 main :: IO ExitCode
@@ -175,10 +198,13 @@ main = do
 
     -- | Writing data to text files
     -- Counted lists (frequency of occurrence)
-    outputCountedList (countedList (nub sVList) sVList) versions_filepath
-    outputCountedList (countedList (nub ibList) ibList) bound_filepath
+    outputCountedList (countedList (nub sVList) sVList) versions_filepath 0
+    outputCountedList (countedList (nub ibList) ibList) bound_filepath 0
     -- Unorered output to text files
     outputUnorderedList shList height_filepath
     outputUnorderedList nTList trust_filepath
 
-    --print "End!"
+    -- Avg trust
+    outputAvgValues shList avg_height_filepath
+    -- Avg Height
+    outputAvgValues nTList avg_trust_filepath

@@ -1,6 +1,6 @@
 # node-stats function
 function initialize-haskell-script {
-   
+   ./getpeerinfo.hs
 }
 
 # Check if gridcoin is running, call node stats script
