@@ -6,8 +6,8 @@
 # GPL v3+
 #
 
-gridcoin_getpeerinfo_update_every=5
-load_priority=1
+gridcoin_getpeerinfo_update_every=10
+load_priority=2
 
 # this is an example charts.d collector
 # it is disabled by default.
@@ -31,7 +31,10 @@ gridcoin_getpeerinfo_check() {
 	return 0
 }
 
-
+gridcoin_getpeerinfo_create() {
+        # create a chart with 3 dimensions
+cat <<EOF
+CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 while read name
 do
     test="$name"
@@ -39,22 +42,8 @@ do
     echo ${stringarray[0]}
     echo ${stringarray[1]}
 done < peerinfo_versions.txt
-
-
-gridcoin_getpeerinfo_create() {
-        # create a chart with 3 dimensions
-cat <<EOF
-CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
-DIMENSION connection 'connections' absolute 1 1
-CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
-DIMENSION blocks 'blocks' absolute 1 1
-CHART gridcoin.money '' "Gridcoin coinsupply" "coins" Coinsupply gridcoin.money line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
-DIMENSION moneysupply 'coins' absolute 1 1
-CHART gridcoin.difficulty '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 DIMENSION difficultypos 'pos' absolute 1 1
 DIMENSION difficultypow 'pow' absolute 1 1
-CHART gridcoin.stake_weight '' "Gridcoin stake weight" "stake weight" Stake_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
-DIMENSION stakeweight 'stake_weight' absolute 1 1
 EOF
 
         return 0
