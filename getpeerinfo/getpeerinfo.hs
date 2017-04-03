@@ -24,12 +24,12 @@ type Counter = Int
 
 -- | Global variables
 -- Change these filepath values at your discretion
-versions_filepath = "peerinfo_versions.txt"
-trust_filepath = "peerinfo_trust.txt"
-avg_trust_filepath = "avg_peerinfo_trust.txt"
-height_filepath = "peerinfo_height.txt"
-avg_height_filepath = "avg_peerinfo_height.txt"
-bound_filepath = "peerinfo_bound.txt"
+versions_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"
+trust_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_trust.txt"
+avg_trust_filepath = "~/GRC-Netdata/getpeerinfo/avg_peerinfo_trust.txt"
+height_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_height.txt"
+avg_height_filepath = "~/GRC-Netdata/getpeerinfo/avg_peerinfo_height.txt"
+bound_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_bound.txt"
 
 -- | Configuring Aeson to handle the getpeerinfo.json fields
 data GetPeerInfo = GetPeerInfo { subver :: String
@@ -185,9 +185,9 @@ main = do
 
     -- | gridcoinresearchd until the script is proven working in VM
     -- You will need to change this depending on your gridcoin setup!
-    -- shell ("gridcoinresearchd getpeerinfo > echo > getpeerinfo.json") Turtle.empty
-    shell ("grc getpeerinfo > echo > getpeerinfo.json") Turtle.empty
-
+      -- shell ("gridcoinresearchd getpeerinfo > echo > getpeerinfo.json") Turtle.empty
+      -- shell ("grc getpeerinfo > echo > getpeerinfo.json") Turtle.empty
+    shell ("sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getpeerinfo > echo > getpeerinfo.json") Turtle.empty
     -- | Finally works! Reads getpeerinfo.json from disk into memory!
     -- From this point onwards, we can reuse getpeerinfoJSON.
     gerpeerinfoJSON <- decode <$> (DBL.readFile jsonFile) :: IO (Maybe [GetPeerInfo])

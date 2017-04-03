@@ -34,13 +34,13 @@ gridcoin_getpeerinfo_check() {
 gridcoin_getpeerinfo_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART GRC.PeerVersions '' "Gridcoin difficulties" "difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
+CHART GRC.PeerVersions '' "Gridcoin peer versions" "client version" Versions GRC.PeerVersions line $((load_priority + 1)) $gridcoin_getpeerinfo_update_every
 while read data
 do
     currentLine="$data"
     stringarray=($currentLine)
     echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
-done < peerinfo_versions.txt
+done < ~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt
 EOF
 
         return 0
@@ -54,7 +54,7 @@ do
     currentLine="$data"
     stringarray=($currentLine)
     echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
-done < peerinfo_versions.txt
+done < ~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt
 END
 VALUESEOF
 
