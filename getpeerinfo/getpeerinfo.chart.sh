@@ -32,30 +32,23 @@ getpeerinfo_check() {
 }
 
 getpeerinfo_create() {
-# create a chart with 3 dimensions
-        
-DATA="$(< ~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt)" #names from names$
-
+#
 echo "CHART GRC.PeerVersions '' 'Gridcoin peer versions' 'client version' Versions GRC.PeerVersions line $((load_priority + 1)) $getpeerinfo_update_every"
- for Line in $DATA; do
-  currentLine="$Line"
+ cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
+  currentLine="$line"
   stringarray=($currentLine)
   echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
  done
  return 0
 }
 
-
-
 getpeerinfo_update() {
 # write the result of the work.
-DATA="$(< ~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt)" #names from names$
-
 BEGIN GRC.PeerVersions
- for Line in $DATA; do
-  currentLine="$Line"
+ cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
+  currentLine="$line"
   stringarray=($currentLine)
-  echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1
+  echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
  done
 END
  return 0
