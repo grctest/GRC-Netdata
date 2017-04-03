@@ -20,14 +20,14 @@ getpeerinfo_check() {
 	#  - 0 to enable the chart
 	#  - 1 to disable the chart
 
-	if [ ${getpeerinfo_update_every} -lt 10 ]
-		then
+	#if [ ${getpeerinfo_update_every} -lt 10 ]
+	#	then
 		# there is no meaning for shorter than 5 seconds
 		# the kernel changes this value every 5 seconds
-		getpeerinfo_update_every=10
-	fi
+	#	getpeerinfo_update_every=10
+	#fi
 
-	[ ${getpeerinfo_enabled} -eq 0 ] && return 1
+	#[ ${getpeerinfo_enabled} -eq 0 ] && return 1
 	return 0
 }
 
@@ -44,12 +44,12 @@ echo "CHART GRC.PeerVersions '' 'Gridcoin peer versions' 'client version' Versio
 
 getpeerinfo_update() {
 # write the result of the work.
-BEGIN GRC.PeerVersions
+echo "BEGIN GRC.PeerVersions"
  cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
   currentLine="$line"
   stringarray=($currentLine)
   echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
  done
-END
+echo "END"
  return 0
 }
