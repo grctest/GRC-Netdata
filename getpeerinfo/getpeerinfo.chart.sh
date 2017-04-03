@@ -42,8 +42,8 @@ CHART GRC.PeerVersions '' "Gridcoin peer versions" "client version" Versions GRC
  for Line in $DATA; do
   currentLine="$Line"
   stringarray=($currentLine)
-  echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
-  echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
+  DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1
+  DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1
  done
 EOF
 
@@ -57,7 +57,7 @@ BEGIN GRC.PeerVersions
  for Line in $DATA; do
   currentLine="$Line"
   stringarray=($currentLine)
-  echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
+  SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1
  done
 END
 VALUESEOF
