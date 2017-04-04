@@ -12,4 +12,4 @@ do
 done
 
 # Start this script with the following:
-# source ./stats.sh >/dev/null 2>&1 < /dev/null &
+# source ./market_scrape.sh >/dev/null 2>&1 < /dev/null &
