@@ -34,15 +34,15 @@ markets_check() {
 markets_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART market.rank '' "Gridcoin CMC Rank" "Rank" rank market.rank line $((load_priority + 1)) $markets_update_every
+CHART market.rank '' "Gridcoin CMC Rank" "Rank" GRC_Rank market.rank line $((load_priority + 1)) $markets_update_every
 DIMENSION rank 'Rank' absolute 1 1
-CHART market.price '' "Gridcoin price" "Price" price market.price line $((load_priority + 1)) $markets_update_every
+CHART market.price '' "Gridcoin price" "Price" GRC_Price market.price line $((load_priority + 1)) $markets_update_every
 DIMENSION usd 'USD' absolute 1 1
 DIMENSION btc 'BTC' absolute 1 1
-CHART market.capandliquidity '' "Gridcoin marketcap & liquidity" "marketcap & liquidity" capandliquidity market.capandliquidity line $((load_priority + 1)) $markets_update_every
+CHART market.capandliquidity '' "Gridcoin marketcap & liquidity" "marketcap & liquidity" MarketCap_and_Liquidity market.capandliquidity line $((load_priority + 1)) $markets_update_every
 DIMENSION volume 'Volume' absolute 1 1
 DIMENSION cap 'Market Cap' absolute 1 1
-CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" percent market.percent_change line $((load_priority + 1)) $markets_update_every
+CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
 DIMENSION onehour '1Hr' absolute 1 1
 DIMENSION twentyfour '24Hr' absolute 1 1
 DIMENSION sevendays '7days' absolute 1 1
@@ -74,7 +74,7 @@ markets_update() {
         rankVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].rank')
         usdVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_usd')
         btcVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_btc')
-        volumeVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].24hr_volume_usd')
+        volumeVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].24h_volume_usd')
         capVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].market_cap_usd')
         onehourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_1h')
         twentyfourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_24h')
