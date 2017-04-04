@@ -48,7 +48,7 @@ echo "BEGIN GRC.PeerVersions"
  cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
   currentLine="$line"
   stringarray=($currentLine)
-  echo "SET ${stringarray[0]} '${stringarray[2]}' absolute 1 1"
+  echo "SET ${stringarray[0]} '${stringarray[2]}'"
  done
 echo "END"
  return 0

@@ -21,15 +21,21 @@ import Turtle -- You need to install this (cabal install turtle)
 type InBound_or_SubVer = String
 type StartingHeight_or_Trust = Int
 type Counter = Int
+type DimensionTXT = Prelude.FilePath
+type SetTXT = Prelude.FilePath
 
 -- | Global variables
 -- Change these filepath values at your discretion
-versions_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"
-trust_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_trust.txt"
-avg_trust_filepath = "~/GRC-Netdata/getpeerinfo/avg_peerinfo_trust.txt"
-height_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_height.txt"
-avg_height_filepath = "~/GRC-Netdata/getpeerinfo/avg_peerinfo_height.txt"
-bound_filepath = "~/GRC-Netdata/getpeerinfo/peerinfo_bound.txt"
+chosenDirectory = "~/GRC-Netdata/getpeerinfo/"
+dimensions_versions_filepath = chosenDirectory ++ "dimensions_peerinfo_versions.txt"
+set_versions_filepath = chosenDirectory ++ "set_peerinfo_versions.txt"
+trust_filepath = chosenDirectory ++ "peerinfo_trust.txt"
+avg_trust_filepath = chosenDirectory ++ "avg_peerinfo_trust.txt"
+height_filepath = chosenDirectory ++ "peerinfo_height.txt"
+avg_height_filepath = chosenDirectory ++ "avg_peerinfo_height.txt"
+dimensions_bound_filepath = chosenDirectory ++ "dimensions_peerinfo_bound.txt"
+set_bound_filepath = chosenDirectory ++ "set_peerinfo_bound.txt"
+infiniteList = [1 .. ]
 
 -- | Configuring Aeson to handle the getpeerinfo.json fields
 data GetPeerInfo = GetPeerInfo { subver :: String
@@ -125,22 +131,24 @@ countedList (x:xs) referenceList = do
 
 -- | Writing the contents of each element of the list to file
 -- Input the list of touples output by countedList
-outputCountedList :: [(InBound_or_SubVer, Int)] -> Prelude.FilePath -> Counter -> IO ExitCode
-outputCountedList (x:xs) txtFilePath counter = do
-    --let contents = T.pack((fst x) ++ " " ++ (show (snd x)))
-    let dimension = "Dimension" ++ (show counter)
-    let contents = dimension ++ " " ++ ((fst x)) ++ " " ++ (show (snd x))
-    --print contents
+outputCountedList :: [(InBound_or_SubVer, Int)] -> DimensionTXT -> SetTXT -> Counter -> IO ExitCode
+outputCountedList (x:xs) dimensionTXTFilePath setTXTFilePath counter = do
+    
+    -- | defining variables for use by shell
+    let dimensionCounter = "Dimension" ++ (show counter)
+    let dimensionTitle = fst x
+    let dimensionValue = show (snd x)
+
     -- | How to catch empty xs when the output is IO?
     -- Perhaps worth trying "outputCountedList [] txtFilePath = []" for less code reuse
     if (xs == [])
         then do
-            shell (T.pack ("echo '" ++ contents ++ "' >> " ++ txtFilePath)) Turtle.empty
-            --(appendFile txtFilePath contents)
+            shell (T.pack ("echo 'DIMENSION " ++ dimensionCounter ++ " " ++ dimensionTitle ++ " absolute 1 1' >> " ++ dimensionTXTFilePath)) Turtle.empty
+            shell (T.pack ("echo 'SET " ++ dimensionCounter ++ " = " ++ dimensionValue ++ "' >> " ++ setTXTFilePath)) Turtle.empty
         else do
-            shell (T.pack ("echo '" ++ contents ++ "' >> " ++ txtFilePath)) Turtle.empty
-            --(appendFile txtFilePath contents) -- Does appendFile cut off the next line from running? Might need to switch for shell!
-            outputCountedList xs txtFilePath (counter + 1)
+            shell (T.pack ("echo 'DIMENSION " ++ dimensionCounter ++ " " ++ dimensionTitle ++ " absolute 1 1' >> " ++ dimensionTXTFilePath)) Turtle.empty
+            shell (T.pack ("echo 'SET " ++ dimensionCounter ++ " = " ++ dimensionValue ++ "' >> " ++ setTXTFilePath)) Turtle.empty
+            outputCountedList xs dimensionTXTFilePath setTXTFilePath (counter + 1)
 
 -- | Outputting the contents of the list to a text file
 -- This isn't actually that useful, as we can't/shouldn't have 200+ lines within a graph!
@@ -176,18 +184,21 @@ main = do
 
     -- | Empty the contents of the existing files!
     -- -n to prevent adding an empty line to the file
-    shell "echo -n '' > peerinfo_versions.txt" Turtle.empty
-    shell "echo -n '' > avg_peerinfo_trust.txt" Turtle.empty
-    shell "echo -n '' > peerinfo_trust.txt" Turtle.empty
-    shell "echo -n '' > avg_peerinfo_height.txt" Turtle.empty
-    shell "echo -n '' > peerinfo_height.txt" Turtle.empty
-    shell "echo -n '' > peerinfo_bound.txt" Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ dimensions_versions_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ set_versions_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ trust_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ avg_trust_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ height_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ avg_height_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ dimensions_bound_filepath)) Turtle.empty
+    shell (T.pack ("echo -n '' > " ++ set_bound_filepath)) Turtle.empty
+
 
     -- | gridcoinresearchd until the script is proven working in VM
     -- You will need to change this depending on your gridcoin setup!
       -- shell ("gridcoinresearchd getpeerinfo > echo > getpeerinfo.json") Turtle.empty
       -- shell ("grc getpeerinfo > echo > getpeerinfo.json") Turtle.empty
-    shell ("sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getpeerinfo > echo > getpeerinfo.json") Turtle.empty
+    -- shell ("sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch/ getpeerinfo > echo > getpeerinfo.json") Turtle.empty
     -- | Finally works! Reads getpeerinfo.json from disk into memory!
     -- From this point onwards, we can reuse getpeerinfoJSON.
     gerpeerinfoJSON <- decode <$> (DBL.readFile jsonFile) :: IO (Maybe [GetPeerInfo])
@@ -200,8 +211,8 @@ main = do
 
     -- | Writing data to text files
     -- Counted lists (frequency of occurrence)
-    outputCountedList (countedList (nub sVList) sVList) versions_filepath 0
-    outputCountedList (countedList (nub ibList) ibList) bound_filepath 0
+    outputCountedList (countedList (nub sVList) sVList) dimensions_versions_filepath set_versions_filepath 0
+    outputCountedList (countedList (nub ibList) ibList) dimensions_bound_filepath set_bound_filepath 0
     -- Unorered output to text files
     outputUnorderedList shList height_filepath
     outputUnorderedList nTList trust_filepath
