@@ -33,34 +33,68 @@ markets_check() {
 
 markets_create() {
         # create a chart with 3 dimensions
-# cat <<EOF
-# CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $markets_update_every
-# DIMENSION connection 'connections' absolute 1 1
-# CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $markets_update_every
-# DIMENSION blocks 'blocks' absolute 1 1
-# EOF
+cat <<EOF
+CHART market.rank '' "Gridcoin CMC Rank" "Rank" rank market.rank line $((load_priority + 1)) $markets_update_every
+DIMENSION rank 'Rank' absolute 1 1
+CHART market.price '' "Gridcoin price" "Price" price market.price line $((load_priority + 1)) $markets_update_every
+DIMENSION usd 'USD' absolute 1 1
+DIMENSION btc 'BTC' absolute 1 1
+CHART market.capandliquidity '' "Gridcoin marketcap & liquidity" "marketcap & liquidity" capandliquidity market.capandliquidity line $((load_priority + 1)) $markets_update_every
+DIMENSION volume 'Volume' absolute 1 1
+DIMENSION cap 'Market Cap' absolute 1 1
+CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" percent market.percent_change line $((load_priority + 1)) $markets_update_every
+DIMENSION onehour '1Hr' absolute 1 1
+DIMENSION twentyfour '24Hr' absolute 1 1
+DIMENSION sevendays '7days' absolute 1 1
+EOF
 
         return 0
 }
 
+#[
+#    {
+#        "id": "gridcoin",
+#        "name": "GridCoin",
+#        "symbol": "GRC",
+#        "rank": "70",
+#        "price_usd": "0.0107371",
+#        "price_btc": "0.00000950",
+#        "24h_volume_usd": "23910.3",
+#        "market_cap_usd": "4173278.0",
+#        "available_supply": "388678321.0",
+#        "total_supply": "388678321.0",
+#        "percent_change_1h": "0.9",
+#        "percent_change_24h": "1.84",
+#        "percent_change_7d": "9.52",
+#        "last_updated": "1491333858"
+#    }
+#]
+
 markets_update() {
-        #connections=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
-        #blocks=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.blocks')
-        #moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')
-        #difficulty_pow=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-work\")
-        #difficulty_pos=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-stake\")
-        #staking_weight=$(cat /home/gridcoin/.GridcoinResearch/getstakinginfo.json | jq '.netstakeweight')
-        # grc=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
-        #load1=$(grc getinfo | jq '.connections')
-        # write the result of the work.
-        #cat <<VALUESEOF
-#BEGIN gridcoin.connection
-#SET connection = $connections
-#END
-#BEGIN gridcoin.blocks
-#SET blocks = $blocks
-#END
-#VALUESEOF
+        rankVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].rank')
+        usdVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_usd')
+        btcVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_btc')
+        volumeVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].24hr_volume_usd')
+        capVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].market_cap_usd')
+        onehourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_1h')
+        twentyfourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_24h')
+        sevendaysVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_7d')
+
+        cat <<VALUESEOF
+BEGIN market.rank
+SET rank = $rankVal
+END
+BEGIN market.price
+SET usd = $usdVal
+SET btc = $btcVal
+END
+BEGIN market.capandliquidity
+SET volume = $volumeVal
+SET cap = $capVal
+BEGIN market.percent_change
+SET onehour = $onehourVal
+SET twentyfour = $twentyfourVal
+VALUESEOF
 
         return 0
 }

@@ -46,7 +46,7 @@ cat "/root/GRC-Netdata/getpeerinfo/dimensions_peerinfo_versions.txt"
 getpeerinfo_update() {
 # write the result of the work.
 
-cat "/root/GRC-Netdata/getpeerinfo/set_peerinfo_versions"
+cat "/root/GRC-Netdata/getpeerinfo/set_peerinfo_versions.txt"
 
 #echo "BEGIN GRC.PeerVersions"
 # cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
