@@ -34,22 +34,26 @@ getpeerinfo_check() {
 getpeerinfo_create() {
 #
 echo "CHART GRC.PeerVersions '' 'Gridcoin peer versions' 'client version' Versions GRC.PeerVersions line $((load_priority + 1)) $getpeerinfo_update_every"
- cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
-  currentLine="$line"
-  stringarray=($currentLine)
-  echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
- done
+# cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
+#  currentLine="$line"
+#  stringarray=($currentLine)
+#  echo "DIMENSION ${stringarray[0]} '${stringarray[1]}' absolute 1 1"
+# done
+cat "/root/GRC-Netdata/getpeerinfo/dimensions_peerinfo_versions.txt"
  return 0
 }
 
 getpeerinfo_update() {
 # write the result of the work.
-echo "BEGIN GRC.PeerVersions"
- cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
-  currentLine="$line"
-  stringarray=($currentLine)
-  echo "SET ${stringarray[0]} '${stringarray[2]}'"
- done
-echo "END"
+
+cat "/root/GRC-Netdata/getpeerinfo/set_peerinfo_versions"
+
+#echo "BEGIN GRC.PeerVersions"
+# cat "/root/GRC-Netdata/getpeerinfo/peerinfo_versions.txt"|while read line; do
+#  currentLine="$line"
+#  stringarray=($currentLine)
+#  echo "SET ${stringarray[0]} '${stringarray[2]}'"
+# done
+#echo "END"
  return 0
 }

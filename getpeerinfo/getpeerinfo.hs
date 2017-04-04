@@ -145,6 +145,7 @@ outputCountedList (x:xs) dimensionTXTFilePath setTXTFilePath counter = do
         then do
             shell (T.pack ("echo 'DIMENSION " ++ dimensionCounter ++ " " ++ dimensionTitle ++ " absolute 1 1' >> " ++ dimensionTXTFilePath)) Turtle.empty
             shell (T.pack ("echo 'SET " ++ dimensionCounter ++ " = " ++ dimensionValue ++ "' >> " ++ setTXTFilePath)) Turtle.empty
+            shell (T.pack ("echo 'END' >> " ++ setTXTFilePath)) Turtle.empty
         else do
             shell (T.pack ("echo 'DIMENSION " ++ dimensionCounter ++ " " ++ dimensionTitle ++ " absolute 1 1' >> " ++ dimensionTXTFilePath)) Turtle.empty
             shell (T.pack ("echo 'SET " ++ dimensionCounter ++ " = " ++ dimensionValue ++ "' >> " ++ setTXTFilePath)) Turtle.empty
@@ -184,14 +185,16 @@ main = do
 
     -- | Empty the contents of the existing files!
     -- -n to prevent adding an empty line to the file
+    --let dimensionString = "CHART GRC.PeerVersions '' 'Gridcoin peer versions' 'client version' Versions GRC.PeerVersions line 5 30"
+    --shell (T.pack ('echo "' ++ dimensionString  ++ '" > ' ++ dimensions_versions_filepath)) Turtle.empty
     shell (T.pack ("echo -n '' > " ++ dimensions_versions_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ set_versions_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ trust_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ avg_trust_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ height_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ avg_height_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ dimensions_bound_filepath)) Turtle.empty
-    shell (T.pack ("echo -n '' > " ++ set_bound_filepath)) Turtle.empty
+    shell (T.pack ("echo 'BEGIN GRC.PeerVersions' > " ++ set_versions_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ trust_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ avg_trust_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ height_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ avg_height_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ dimensions_bound_filepath)) Turtle.empty
+    --shell (T.pack ("echo -n '' > " ++ set_bound_filepath)) Turtle.empty
 
 
     -- | gridcoinresearchd until the script is proven working in VM
@@ -205,19 +208,19 @@ main = do
 
     -- | Converting JSON to seperate lists
     let sVList = (jsonToSubVerList (fromJust gerpeerinfoJSON))
-    let nTList = (jsonToTrustList (fromJust gerpeerinfoJSON))
-    let shList = (jsonToStartingHeightList (fromJust gerpeerinfoJSON))
-    let ibList = (jsonToBoundList (fromJust gerpeerinfoJSON))
+    --let nTList = (jsonToTrustList (fromJust gerpeerinfoJSON))
+    --let shList = (jsonToStartingHeightList (fromJust gerpeerinfoJSON))
+    --let ibList = (jsonToBoundList (fromJust gerpeerinfoJSON))
 
     -- | Writing data to text files
     -- Counted lists (frequency of occurrence)
     outputCountedList (countedList (nub sVList) sVList) dimensions_versions_filepath set_versions_filepath 0
-    outputCountedList (countedList (nub ibList) ibList) dimensions_bound_filepath set_bound_filepath 0
+    --outputCountedList (countedList (nub ibList) ibList) dimensions_bound_filepath set_bound_filepath 0
     -- Unorered output to text files
-    outputUnorderedList shList height_filepath
-    outputUnorderedList nTList trust_filepath
+    --outputUnorderedList shList height_filepath
+    --outputUnorderedList nTList trust_filepath
 
     -- Avg trust
-    outputAvgValues shList avg_height_filepath
+    --outputAvgValues shList avg_height_filepath
     -- Avg Height
-    outputAvgValues nTList avg_trust_filepath
+    --outputAvgValues nTList avg_trust_filepath
