@@ -1,0 +1,8 @@
+[Unit]
+Description=Run the collection script for the gridcoin netdata charts
+After=netdata.service
+
+[Service]
+Type=oneshot
+User=gridcoin
+ExecStart=/bin/bash /usr/local/bin/gridcoin_netdata_stats.sh
