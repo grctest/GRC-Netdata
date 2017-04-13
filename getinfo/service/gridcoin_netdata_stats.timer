@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs gridcoin netdata service evry 5 seconds
+
+[Timer]
+# Time between running each consecutive time
+OnUnitActiveSec=5s
+OnBootSec=7min
+
+[Install]
+WantedBy=multi-user.target
