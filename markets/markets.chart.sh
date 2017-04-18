@@ -35,17 +35,17 @@ markets_create() {
         # create a chart with 3 dimensions
 cat <<EOF
 CHART market.rank '' "Gridcoin CMC Rank" "Rank" GRC_Rank market.rank line $((load_priority + 1)) $markets_update_every
-DIMENSION rank 'Rank' absolute 1 1
+DIMENSION rank 'Rank' absolute 100 100
 CHART market.price '' "Gridcoin price" "Price" GRC_Price market.price line $((load_priority + 1)) $markets_update_every
-DIMENSION usd 'USD' absolute 1 1
-DIMENSION btc 'BTC' absolute 1 1
+DIMENSION usd 'USD' absolute 100 100
+DIMENSION btc 'BTC' absolute 100000000 1
 CHART market.capandliquidity '' "Gridcoin marketcap & liquidity" "marketcap & liquidity" MarketCap_and_Liquidity market.capandliquidity line $((load_priority + 1)) $markets_update_every
-DIMENSION volume 'Volume' absolute 1 1
-DIMENSION cap 'Market Cap' absolute 1 1
+DIMENSION volume 'Volume' absolute 100 100
+DIMENSION cap 'Market Cap' absolute 100 100
 CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
-DIMENSION onehour '1Hr' absolute 1 1
-DIMENSION twentyfour '24Hr' absolute 1 1
-DIMENSION sevendays '7days' absolute 1 1
+DIMENSION onehour '1Hr' absolute 100 100
+DIMENSION twentyfour '24Hr' absolute 100 100
+DIMENSION sevendays '7days' absolute 100 100
 EOF
 
         return 0
@@ -91,10 +91,12 @@ END
 BEGIN market.capandliquidity
 SET volume = $volumeVal
 SET cap = $capVal
+END
 BEGIN market.percent_change
 SET onehour = $onehourVal
 SET twentyfour = $twentyfourVal
 SET sevendays = $sevendaysVal
+END
 VALUESEOF
 
         return 0
