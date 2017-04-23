@@ -34,7 +34,7 @@ gridcoin_check() {
 gridcoin_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART gridcoin.connection '' "Gridcoin client connections" "connections" connection gridcoin.connection line $((load_priority + 1)) $gridcoin_update_every
+CHART gridcoin.connection '' "Gridcoin client connections" "connections" Connections gridcoin.connection line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION connection 'connections' absolute 1 1
 CHART gridcoin.blocks '' "Gridcoin blocks" "blocks" Blocks gridcoin.block line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION blocks 'blocks' absolute 1 1
