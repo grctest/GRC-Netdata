@@ -51,14 +51,14 @@ EOF
 }
 
 gridcoin_update() {
-        connections=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.connections')
-        blocks=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.blocks')
-        moneysupply=$(cat /home/gridcoin/.GridcoinResearch/getinfo.json | jq '.moneysupply')
-        difficulty_pow=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-work\")
-        difficulty_pos=$(cat /home/gridcoin/.GridcoinResearch/difficulty.json | jq .\"proof-of-stake\")
-        staking_weight=$(cat /home/gridcoin/.GridcoinResearch/getstakinginfo.json | jq '.netstakeweight')
-        # grc=$(sudo -u gridcoin gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch getinfo | jq '.connections')
-        #load1=$(grc getinfo | jq '.connections')
+        GRCINFO='/home/gridcoin/.GridcoinResearch/getinfo.json'
+        GRCSTAKING='/home/gridcoin/.GridcoinResearch/getstakinginfo.json'
+        connections=$(jq '.connections' $GRCINFO)
+        blocks=$(jq '.blocks' $GRCINFO)
+        moneysupply=$(jq '.moneysupply' $GRCINFO)
+        difficulty_pow=$(jq '.difficulty["proof-of-work"]' $GRCINFO)
+        difficulty_pos=$(jq '.difficulty["proof-of-stake"]' $GRCINFO)
+        staking_weight=$(jq '.netstakeweight' $GRCSTAKING)
         # write the result of the work.
         cat <<VALUESEOF
 BEGIN gridcoin.connection
