@@ -35,17 +35,19 @@ markets_create() {
         # create a chart with 3 dimensions
 cat <<EOF
 CHART market.rank '' "Gridcoin CMC Rank" "Rank" GRC_Rank market.rank line $((load_priority + 1)) $markets_update_every
-DIMENSION rank 'Rank' absolute 100 100
-CHART market.price '' "Gridcoin price" "Price" GRC_Price market.price line $((load_priority + 1)) $markets_update_every
-DIMENSION usd 'USD' absolute 100 100
-DIMENSION btc 'BTC' absolute 100000000 1
-CHART market.capandliquidity '' "Gridcoin marketcap & liquidity" "marketcap & liquidity" MarketCap_and_Liquidity market.capandliquidity line $((load_priority + 1)) $markets_update_every
-DIMENSION volume 'Volume' absolute 100 100
-DIMENSION cap 'Market Cap' absolute 100 100
+DIMENSION rank 'Rank' absolute 1 1
+CHART market.usdprice '' "Gridcoin price" "Price" GRC_to_USD_Price market.usdprice line $((load_priority + 1)) $markets_update_every
+DIMENSION usd 'USD' absolute 1 10000
+CHART market.btcprice '' "Gridcoin price" "Price (Satoshi)" GRC_to_BTC_Price market.btcprice line $((load_priority + 1)) $markets_update_every
+DIMENSION btc 'BTC' absolute 1 1
+CHART market.mcap '' "Gridcoin marketcap" "Market cap" Market_Cap market.mcap line $((load_priority + 1)) $markets_update_every
+DIMENSION cap 'Cap' absolute 1 1
+CHART market.mliquidity '' "Gridcoin Liquidity" "Market liquidity" Market_Liquiduity market.mliquidity line $((load_priority + 1)) $markets_update_every
+DIMENSION volume 'Volume' absolute 1 1
 CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
-DIMENSION onehour '1Hr' absolute 100 100
-DIMENSION twentyfour '24Hr' absolute 100 100
-DIMENSION sevendays '7days' absolute 100 100
+DIMENSION onehour '1Hr' absolute 1 100
+DIMENSION twentyfour '24Hr' absolute 1 100
+DIMENSION sevendays '7Days' absolute 1 100
 EOF
 
         return 0
@@ -71,26 +73,39 @@ EOF
 #]
 
 markets_update() {
-        rankVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].rank')
-        usdVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_usd')
-        btcVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].price_btc')
-        volumeVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[]."24h_volume_usd"')
-        capVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].market_cap_usd')
-        onehourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_1h')
-        twentyfourVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_24h')
-        sevendaysVal=$(cat /home/gridcoin/.GridcoinResearch/gridcoin_cmc.json | jq '.[].percent_change_7d')
-
+        GRCCMC='/home/gridcoin/.GridcoinResearch/gridcoin_cmc.json'
+	# jq -r raw output saves stirpping of "'s
+	# tr -d '\n' removes end of line so we can do math
+	# piping to bc is used for calculations as shell can't do floating point operations
+        rankVal=$(jq -r '.[].rank' $GRCCMC | tr -d '\n')
+        usdVal0=$(jq -r '.[].price_usd' $GRCCMC | tr -d '\n')
+        usdVal=$(echo $usdVal0 \* 10000 | bc | tr -d '\n')
+        btcVal0=$(jq -r '.[].price_btc' $GRCCMC | tr -d '\n')
+ 	btcVal=$(echo $btcVal0 \* 100000000 | bc | tr -d '\n')
+        volumeVal=$(jq '.[]."24h_volume_usd"' $GRCCMC)
+        capVal=$(jq '.[].market_cap_usd' $GRCCMC)
+        onehourVal0=$(jq -r '.[].percent_change_1h' $GRCCMC | tr -d '\n')
+	onehourVal=$(echo $onehourVal0 \* 100 | bc | tr -d '\n')
+        twentyfourVal0=$(jq -r '.[].percent_change_24h' $GRCCMC | tr -d '\n')
+	twentyfourVal=$(echo $twentyfourVal0 \* 100 | bc | tr -d '\n')
+        sevendaysVal0=$(jq -r '.[].percent_change_7d' $GRCCMC | tr -d '\n')
+	sevendaysVal=$(echo $sevendaysVal0 \* 100 | bc | tr -d '\n')
+	
         cat <<VALUESEOF
 BEGIN market.rank
 SET rank = $rankVal
 END
-BEGIN market.price
+BEGIN market.usdprice
 SET usd = $usdVal
+END
+BEGIN market.btcprice
 SET btc = $btcVal
 END
-BEGIN market.capandliquidity
-SET volume = $volumeVal
+BEGIN market.mcap
 SET cap = $capVal
+END
+BEGIN market.mliquidity
+SET volume = $volumeVal
 END
 BEGIN market.percent_change
 SET onehour = $onehourVal
