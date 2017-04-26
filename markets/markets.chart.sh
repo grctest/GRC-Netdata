@@ -45,9 +45,9 @@ DIMENSION cap 'Cap' absolute 1 1
 CHART market.mliquidity '' "Gridcoin Liquidity" "Market liquidity" Market_Liquiduity market.mliquidity line $((load_priority + 1)) $markets_update_every
 DIMENSION volume 'Volume' absolute 1 1
 CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
-DIMENSION onehour '1Hr' absolute 100 1
-DIMENSION twentyfour '24Hr' absolute 100 1
-DIMENSION sevendays '7Days' absolute 100 1
+DIMENSION onehour '1Hr' absolute 1 100
+DIMENSION twentyfour '24Hr' absolute 1 100
+DIMENSION sevendays '7Days' absolute 1 100
 EOF
 
         return 0
