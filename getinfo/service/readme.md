@@ -1,14 +1,6 @@
 Service install
 
-Note: Don't need to run both setup scripts. Read first before you run one or the other. 
-
-setup_service.sh:
-* This is written in bash and should be default install. Only this service script should be needed for standard user.
-
-setup_service_shonly.sh:
-* This is written in sh for those who don't have bash. However this version you must enable/start services on your own.
-
-Geography locations only available in service setup. 
+Note: bash shell required for scripts
 
 ----------
 
@@ -65,15 +57,6 @@ Services start after 7 minutes after boot
 Install: This may require sudo 
   * chmod +x setup_service.sh
   * ./setup_service.sh
-
-----------
-
-setup_service_shonly.sh
-
-Install: This may require sudo
-  * chmod +x setup_service_shonly.sh
-  * ./setup_service_shonly.sh
-  * Follow manual enable/start instructions
 
 ----------
 
