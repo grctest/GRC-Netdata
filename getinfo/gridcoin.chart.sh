@@ -77,8 +77,8 @@ gridcoin_update() {
         geoOT=$(jq -r '.[].contOT' $GRCGEO)
 	# write the result of the work.
         cat <<VALUESEOF
-BEGIN Gridcoin.connection
-SET connection = $connections
+BEGIN Gridcoin.connections
+SET connections = $connections
 END
 BEGIN Gridcoin.blocks
 SET blocks = $blocks
