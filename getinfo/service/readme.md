@@ -9,32 +9,33 @@ setup_service_shonly.sh:
 * This is written in sh for those who don't have bash. However this version you must enable/start services on your own.
 
 Geography locations only available in service setup. 
-###########################
-# setup_service.sh        #
-###########################
+
+----------
+
+setup_service.sh
 
 Part 1: Install Gridcoin netdata
-  a) Installs service files to /etc/systemd/system
-  b) Installs service script .sh file to /usr/local/bin
-  c) Installs gridcoin.chart.sh to /usr/libexec/netdata/charts.d
-  d) Makes both gridcoin_netdata_stats.sh and gridcoin_chart.sh executable
+  * Installs service files to /etc/systemd/system
+  * Installs service script .sh file to /usr/local/bin
+  * Installs gridcoin.chart.sh to /usr/libexec/netdata/charts.d
+  * Makes both gridcoin_netdata_stats.sh and gridcoin_chart.sh executable
 
 Part 2: Install Gricoin geography gather
-  a) Installs service files to /etc/systemd/system
-  b) Installs geo.json to /usr/local/bin
-  c) Installs service script .sh file to /usr/local/bin
-  d) Makes gridcoin_geo_scrape.sh executable
+  * Installs service files to /etc/systemd/system
+  * Installs geo.json to /usr/local/bin
+  * Installs service script .sh file to /usr/local/bin
+  * Makes gridcoin_geo_scrape.sh executable
 
 Part 3: Install Freegeoip
-  a) Installs service file to /etc/systemd/system
-  b) Copies license file to /usr/local/bin as required in both source code or binary release
-  c) Installs freegeoip binary to /usr/local/bin
-  d) Makes freegeoip executable
+  * Installs service file to /etc/systemd/system
+  * Copies license file to /usr/local/bin as required in both source code or binary release
+  * Installs freegeoip binary to /usr/local/bin
+  * Makes freegeoip executable
 
 Part 4: Request permission to start services
-  a) Starts gridcoin_netdata_stats.timer (Defaultly set at 5 seconds)
-  b) Starts gridcoin_geo_scrape.timer (Defaultly set at 15 seconds)
-  c) Starts gridcoin_freegeoip_service.service (Runs in background 'simple' mode)
+  * Starts gridcoin_netdata_stats.timer (Defaultly set at 5 seconds)
+  * Starts gridcoin_geo_scrape.timer (Defaultly set at 15 seconds)
+  * Starts gridcoin_freegeoip_service.service (Runs in background 'simple' mode)
 
 Important: geo.json contains data to determine country code to continent code.
 
@@ -62,33 +63,33 @@ Online API Notes:
 Services start after 7 minutes after boot
 
 Install: This may require sudo 
-  a) chmod +x setup_service.sh
-  b) ./setup_service.sh
+  * chmod +x setup_service.sh
+  * ./setup_service.sh
 
-###########################
-# setup_service_shonly.sh #
-###########################
+----------
+
+setup_service_shonly.sh
 
 Install: This may require sudo
-  a) chmod +x setup_service_shonly.sh
-  b) ./setup_service_shonly.sh
-  c) Follow manual enable/start instructions
+  * chmod +x setup_service_shonly.sh
+  * ./setup_service_shonly.sh
+  * Follow manual enable/start instructions
 
-###########################
-# Manual Enable/Start     #
-###########################
+----------
+
+Manual Enable/Start
 
 Enable:
-  a) systemctl enable gridcoin_netdata_stats.timer
-  b) systemctl enable gridcoin_geo_scrape.timer
-  c) systemctl enable gridcoin_freegeoip_service.service
+  * systemctl enable gridcoin_netdata_stats.timer
+  * systemctl enable gridcoin_geo_scrape.timer
+  * systemctl enable gridcoin_freegeoip_service.service
 
 Start:
-  a) systemctl start gridcoin_netdata_stats.timer
-  b) systemctl start gridcoin_geo_scrape.timer
-  c) systemctl start gridcoin_freegeoip_service.service
+  * systemctl start gridcoin_netdata_stats.timer
+  * systemctl start gridcoin_geo_scrape.timer
+  * systemctl start gridcoin_freegeoip_service.service
 
 Verify:
-  a) systemctl status gridcoin_netdata_stats.timer
-  b) systemctl status gridcoin_geo_scrape.timer
-  c) systemctl status gridcoin_freegeoip_service.service
+  * systemctl status gridcoin_netdata_stats.timer
+  * systemctl status gridcoin_geo_scrape.timer
+  * systemctl status gridcoin_freegeoip_service.service
