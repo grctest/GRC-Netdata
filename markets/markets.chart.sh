@@ -34,17 +34,17 @@ markets_check() {
 markets_create() {
         # create a chart with 3 dimensions
 cat <<EOF
-CHART market.rank '' "Gridcoin CMC Rank" "Rank" GRC_Rank market.rank line $((load_priority + 1)) $markets_update_every
+CHART Market.rank '' "Gridcoin CMC Rank" "Rank" GRC_Rank market.rank line $((load_priority + 1)) $markets_update_every
 DIMENSION rank 'Rank' absolute 1 1
-CHART market.usdprice '' "Gridcoin price" "Price" GRC_to_USD_Price market.usdprice line $((load_priority + 1)) $markets_update_every
+CHART Market.usdprice '' "Gridcoin price" "Price" GRC_to_USD_Price market.usdprice line $((load_priority + 1)) $markets_update_every
 DIMENSION usd 'USD' absolute 1 10000
-CHART market.btcprice '' "Gridcoin price" "Price (Satoshi)" GRC_to_BTC_Price market.btcprice line $((load_priority + 1)) $markets_update_every
+CHART Market.btcprice '' "Gridcoin price" "Price (Satoshi)" GRC_to_BTC_Price market.btcprice line $((load_priority + 1)) $markets_update_every
 DIMENSION btc 'BTC' absolute 1 1
-CHART market.mcap '' "Gridcoin marketcap" "Market cap" Market_Cap market.mcap line $((load_priority + 1)) $markets_update_every
+CHART Market.mcap '' "Gridcoin marketcap" "Market cap" Market_Cap market.mcap line $((load_priority + 1)) $markets_update_every
 DIMENSION cap 'Cap' absolute 1 1
-CHART market.mliquidity '' "Gridcoin Liquidity" "Market liquidity" Market_Liquiduity market.mliquidity line $((load_priority + 1)) $markets_update_every
+CHART Market.mliquidity '' "Gridcoin Liquidity" "Market liquidity" Market_Liquiduity market.mliquidity line $((load_priority + 1)) $markets_update_every
 DIMENSION volume 'Volume' absolute 1 1
-CHART market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
+CHART Market.percent_change '' "Gridcoin percent change" "Gridcoin percent change" GRC_Percent_Changes market.percent_change line $((load_priority + 1)) $markets_update_every
 DIMENSION onehour '1Hr' absolute 1 100
 DIMENSION twentyfour '24Hr' absolute 1 100
 DIMENSION sevendays '7Days' absolute 1 100
@@ -92,22 +92,22 @@ markets_update() {
 	sevendaysVal=$(echo $sevendaysVal0 \* 100 | bc | tr -d '\n')
 	
         cat <<VALUESEOF
-BEGIN market.rank
+BEGIN Market.rank
 SET rank = $rankVal
 END
-BEGIN market.usdprice
+BEGIN Market.usdprice
 SET usd = $usdVal
 END
-BEGIN market.btcprice
+BEGIN Market.btcprice
 SET btc = $btcVal
 END
-BEGIN market.mcap
+BEGIN Market.mcap
 SET cap = $capVal
 END
-BEGIN market.mliquidity
+BEGIN Market.mliquidity
 SET volume = $volumeVal
 END
-BEGIN market.percent_change
+BEGIN Market.percent_change
 SET onehour = $onehourVal
 SET twentyfour = $twentyfourVal
 SET sevendays = $sevendaysVal

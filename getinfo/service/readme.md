@@ -1,10 +1,79 @@
-A systemd service that keeps the files netdata checks up to date. Does the same as running the "source ./stats.sh ...." command but may be more usable. Will start automatically on boot after 7 minutes, giving time for gridcoin to start, then updates the files every 5 seconds.
+Service install
 
-INSTALL
-As long as the machine is setup per the main readme file. Run "./setup_service.sh" (may require sudo) to copy the files to the proper directories.
+Note: bash shell required for scripts
 
-Enable the service using "systemctl enable gridcoin_netdata_stats.timer"
+----------
 
-Start the service timer using "systemctl start gridcoin_netdata_stats.timer"
+setup_service.sh
 
-Find the status of the service "systemctl status gridcoin_netdata_stats.service"
+Part 1: Install Gridcoin netdata
+  * Installs service files to /etc/systemd/system
+  * Installs service script .sh file to /usr/local/bin
+  * Installs gridcoin.chart.sh to /usr/libexec/netdata/charts.d
+  * Makes both gridcoin_netdata_stats.sh and gridcoin_chart.sh executable
+
+Part 2: Install Gricoin geography gather
+  * Installs service files to /etc/systemd/system
+  * Installs geo.json to /usr/local/bin
+  * Installs service script .sh file to /usr/local/bin
+  * Makes gridcoin_geo_scrape.sh executable
+
+Part 3: Install Freegeoip
+  * Installs service file to /etc/systemd/system
+  * Copies license file to /usr/local/bin as required in both source code or binary release
+  * Installs freegeoip binary to /usr/local/bin
+  * Makes freegeoip executable
+
+Part 4: Request permission to start services
+  * Starts gridcoin_netdata_stats.timer (Defaultly set at 5 seconds)
+  * Starts gridcoin_geo_scrape.timer (Defaultly set at 15 seconds)
+  * Starts gridcoin_freegeoip_service.service (Runs in background 'simple' mode)
+
+Important: geo.json contains data to determine country code to continent code.
+
+Local API Notes:
+* Setup to use standard HTTP on port 5000 (modify in .service file)
+* You can enable HTTPS (modify in .service file -- check /usr/local/bin/freegeoip --help)
+* To setup HTTPS you will need to deal with certificates, etc.
+* freegeoip can be downloaded @ https://github.com/fiorix/freegeoip/releases/ 
+* Setup automatically downloads and extracts freegeoip
+ 
+Personal Notes:
+* I have firewall blocking all ports except ones I allow for node related task.
+* I use HTTP for this application to minimally impact the enviroment.
+* No outside access permitted to the 5000 in my firewall settings.
+* Firewalls should be setup regardless.
+* I recommend you run netdata through a webserver and make netdata a virtual server and enabled ssl for security.
+* Also configure to block access to files like netdata.conf.
+* Locally I'm using about 1.5 second of cpu time per 60 ips which is 40 times faster then online API
+
+Online API Notes:
+* You can modify a few items in script to use the online API of https://freegeoip.net/json/1.1.1.1
+* This method is however slow and intensive on resources over longer period of time. (30 ips over 60 seconds)
+* Online API requires modifying of the script and disabling of local API
+* Online API limits 15000 requests an hour or 250 requests a minute.
+
+Services start after 7 minutes after boot
+
+Install: This may require sudo 
+  * chmod +x setup_service.sh
+  * ./setup_service.sh
+
+----------
+
+Manual Enable/Start
+
+Enable:
+  * systemctl enable gridcoin_netdata_stats.timer
+  * systemctl enable gridcoin_geo_scrape.timer
+  * systemctl enable gridcoin_freegeoip_service.service
+
+Start:
+  * systemctl start gridcoin_netdata_stats.timer
+  * systemctl start gridcoin_geo_scrape.timer
+  * systemctl start gridcoin_freegeoip_service.service
+
+Verify:
+  * systemctl status gridcoin_netdata_stats.timer
+  * systemctl status gridcoin_geo_scrape.timer
+  * systemctl status gridcoin_freegeoip_service.service

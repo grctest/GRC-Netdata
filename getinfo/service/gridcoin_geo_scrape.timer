@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs gridcoin geography scrape service every 15 seconds
+
+[Timer]
+# Time between running each consecutive time
+OnUnitActiveSec=15s
+OnBootSec=7min
+
+[Install]
+WantedBy=multi-user.target

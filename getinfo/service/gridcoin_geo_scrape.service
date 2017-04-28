@@ -1,0 +1,8 @@
+[Unit]
+Description=Run the collection script for the gridcoin geographic scrape chart
+After=netdata.service
+
+[Service]
+Type=oneshot
+User=gridcoin
+ExecStart=/bin/bash /usr/local/bin/gridcoin_geo_scrape.sh
