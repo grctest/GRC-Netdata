@@ -35,7 +35,8 @@ Local API Notes:
 * Setup to use standard HTTP on port 5000 (modify in .service file)
 * You can enable HTTPS (modify in .service file -- check /usr/local/bin/freegeoip --help)
 * To setup HTTPS you will need to deal with certificates, etc.
-* freegeoip can be downloaded @ https://github.com/fiorix/freegeoip/releases/ if you choose to not trust copy included in here.
+* freegeoip can be downloaded @ https://github.com/fiorix/freegeoip/releases/ 
+* Setup automatically downloads and extracts freegeoip
  
 Personal Notes:
 * I have firewall blocking all ports except ones I allow for node related task.
