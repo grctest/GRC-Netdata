@@ -1,8 +1,0 @@
-[Unit]
-Description=Run the collection script for the gridcoin geographic freegeoip service for chart
-After=netdata.service
-
-[Service]
-Type=simple
-User=gridcoin
-ExecStart=/usr/local/bin/freegeoip -http 127.0.0.1:5000
