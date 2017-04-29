@@ -19,7 +19,7 @@ Part 2: Install Gricoin geography gather
   * Makes gridcoin_geo_scrape.sh executable
 
 Part 3: Install Freegeoip
-  * Installs service file to /etc/systemd/system
+  * Makes crontab entry under user gridcoin to start freegeoip at boot
   * Copies license file to /usr/local/bin as required in both source code or binary release
   * Installs freegeoip binary to /usr/local/bin
   * Makes freegeoip executable
@@ -27,12 +27,12 @@ Part 3: Install Freegeoip
 Part 4: Request permission to start services
   * Starts gridcoin_netdata_stats.timer (Defaultly set at 5 seconds)
   * Starts gridcoin_geo_scrape.timer (Defaultly set at 15 seconds)
-  * Starts gridcoin_freegeoip_service.service (Runs in background 'simple' mode)
+  * Starts freegeoip under gridcoin through sudo -u gridcoin. After reboot it'll start from gridcoin crontab.
 
 Important: geo.json contains data to determine country code to continent code.
 
 Local API Notes:
-* Setup to use standard HTTP on port 5000 (modify in .service file)
+* Setup to use standard HTTP on port 5000 (modify in crontab file)
 * You can enable HTTPS (modify in .service file -- check /usr/local/bin/freegeoip --help)
 * To setup HTTPS you will need to deal with certificates, etc.
 * freegeoip can be downloaded @ https://github.com/fiorix/freegeoip/releases/ 
@@ -66,14 +66,13 @@ Manual Enable/Start
 Enable:
   * systemctl enable gridcoin_netdata_stats.timer
   * systemctl enable gridcoin_geo_scrape.timer
-  * systemctl enable gridcoin_freegeoip_service.service
 
 Start:
   * systemctl start gridcoin_netdata_stats.timer
   * systemctl start gridcoin_geo_scrape.timer
-  * systemctl start gridcoin_freegeoip_service.service
+  * sudo -u gridcoin /usr/local/bin/freegeoip -http 127.0.0.1:5000 -silent &
 
 Verify:
   * systemctl status gridcoin_netdata_stats.timer
   * systemctl status gridcoin_geo_scrape.timer
-  * systemctl status gridcoin_freegeoip_service.service
+  * ps aux | grep freegeoip
