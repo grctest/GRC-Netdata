@@ -3,7 +3,7 @@
 # Part 1: Install Gridcoin netdata stats to service
 # Part 2: Install Gricoin geography gathering to service
 # Part 3: Install Freegeoip as service
-# Part 4: Permission to start services
+# Part 4: Permission to start services/freegeoip
 #
 # Added functions to accept inputs for starting services.
 # Functions for setup
@@ -39,12 +39,14 @@ function serviceinstall {
         #
         # Download archive and extract freegeoip (more secure)
         # Copy freegeoip service, binary and license file
+        # Service not supported as doesn't run as daemon nor can be forced with systemctl
         echo Downloading freegeoip version 3.2 amd64..
         wget https://github.com/fiorix/freegeoip/releases/download/v3.2/freegeoip-3.2-linux-amd64.tar.gz
         echo Extracting freegeoip from archive..
         tar -zxf freegeoip-3.2-linux-amd64.tar.gz freegeoip-3.2-linux-amd64/freegeoip
-        echo Copying service file..
-        cp ./gridcoin_freegeoip_service.service /etc/systemd/system
+        echo Making crontab bootup entry under user gridcoin..
+        echo Warning: If you have run this install more then once then crontab -u gridcoin -e and make sure there is no duplicate entry for freegeoip
+        crontab -l -u gridcoin | cat - freegeoip.crontab | crontab -u gridcoin -
         echo Copying license file..
         cp ./freegeoip.license /usr/local/bin/freegeoip.license
         echo Copying freegeoip binary..
@@ -55,14 +57,14 @@ function serviceinstall {
 
         # Part 4
         #
-        # Ask to start services
+        # Ask to start services/start freegeoip
         servicestartup
         exit 1
 }
 
 function servicestartup {
 
-        read -p "Would you like to start these services at this time? (Y/N) " -n 1 choice
+        read -p "Would you like to start these services and freegeoip at this time? (Y/N) " -n 1 choice
         echo
         case "$choice" in
                 y|Y ) answer="Y";;
@@ -76,9 +78,9 @@ function servicestartup {
                 echo Enabling/Starting gridcoin_geo_scrape..
                 systemctl enable gridcoin_geo_scrape.timer
                 systemctl start gridcoin_geo_scrape.timer
-                echo Enabling/Starting freegeoip..
-                systemctl enable gridcoin_freegeoip_service.service
-                systemctl start gridcoin_freegeoip_service.service
+                echo Starting freegeoip..
+                # Start from sudo this time however after reboot it will load automatically as @reboot is supported by normal accounts as well.
+                sudo -u gridcoin /usr/local/bin/freegeoip -http 127.0.0.1:5000 -silent &
                 echo Complete.. Verify service status.
                 exit 1
         elif [[ $answer == "N" ]]
