@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 #--------------------------------------------------
 # This script intended to run as service addition to gridcoin_netdata or as a seperate service if more charts are added
