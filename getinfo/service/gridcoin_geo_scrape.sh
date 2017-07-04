@@ -24,7 +24,7 @@
 # SET enviroment variables
 
 APIADDRESS='http://127.0.0.1:5000/json'
-GRCAPP="$(which gridcoind)"
+GRCAPP="$(which gridcoinresearchd)"
 GRCPATH="$(getent passwd gridcoin | cut -d: -f6)/.GridcoinResearch"
 GRCALIAS="sudo -u gridcoin ${GRCAPP} -datadir=${GRCPATH}"
 
