@@ -45,8 +45,8 @@ function serviceinstall {
         echo Extracting freegeoip from archive..
         tar -zxf freegeoip-3.2-linux-amd64.tar.gz freegeoip-3.2-linux-amd64/freegeoip
         echo Making crontab bootup entry under user gridcoin..
-        echo Warning: If you have run this install more then once then crontab -u gridcoin -e and make sure there is no duplicate entry for freegeoip
-        crontab -l -u gridcoin | cat - freegeoip.crontab | crontab -u gridcoin -
+        crontab_contains_freegeoip="$(crontab -l -u gridcoin | grep freegeoip)"
+        [[ ${crontab_contains_freegeoip} -lt 1 ]] && crontab -l -u gridcoin | cat - freegeoip.crontab | crontab -u gridcoin -
         echo Copying license file..
         cp ./freegeoip.license /usr/local/bin/freegeoip.license
         echo Copying freegeoip binary..

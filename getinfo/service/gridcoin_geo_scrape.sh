@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -xe
 
 #--------------------------------------------------
 # This script intended to run as service addition to gridcoin_netdata or as a seperate service if more charts are added
@@ -24,9 +24,9 @@
 # SET enviroment variables
 
 APIADDRESS='http://127.0.0.1:5000/json'
-GRCAPP='/usr/bin/gridcoinresearchd'
-GRCPATH='/home/gridcoin/.GridcoinResearch'
-GRCALIAS='sudo -u gridcoin /usr/bin/gridcoinresearchd -datadir=/home/gridcoin/.GridcoinResearch'
+GRCAPP="$(which gridcoind)"
+GRCPATH="$(getent passwd gridcoin | cut -d: -f6)/.GridcoinResearch"
+GRCALIAS="sudo -u gridcoin ${GRCAPP} -datadir=${GRCPATH}"
 
 # END enviroment variables
 
@@ -35,10 +35,10 @@ then
 
 	# Get peersinfo from grdicoinresearchd daemon -- 2 Methods default uncommented for service and source method is commented out.
 	# Lets try to avoid using files if we can for simple parts like processing. This won't continue unless data has passed.
-	# Service method 
-	peerinfo=$($GRCAPP getpeerinfo | jq -r '.[].addr' | rev | cut -d':' -f2- | rev)
+	# Service method
+	peerinfo="$(${GRCAPP} getpeerinfo | jq -r '.[].addr' | rev | cut -d':' -f2- | rev | tr -d [])"
 	# Alias Method
-	# peerinfo=$($GRCALIAS getpeerinfo | jq -r '.[].addr' | rev | cut -d':' -f2- | rev)
+	# peerinfo="$(${GRCALIAS} getpeerinfo | jq -r '.[].addr' | rev | cut -d: -f2- | rev | tr -d [])"
 	# Reset continent count values
 	contNA=0	# North America
 	contSA=0	# South America
@@ -47,13 +47,18 @@ then
 	contAS=0	# Asia
 	contOC=0	# Australia (Oceania)
 	# contAN=0	# Antarctica // Removed as antarctica has no decent internet to support an application such as gridcoin. In event of one add to contOT.
-	contOT=0	# Other, yes they exist 
+	contOT=0	# Other, yes they exist
 	# Do loop to run through peerinfo string line by line.
 	while read -r line; do
 		# Curl each ip address wheather IPV4 or Ipv6 through API
-		curldata=$(curl -s $APIADDRESS/$line | jq -r '.country_code')
+		if [[ ${line} == *":"* ]]
+		then
+			curldata="$(curl -s ${APIADDRESS}/?q=${line} | jq -r '.country_code')"
+		else
+			curldata="$(curl -s ${APIADDRESS}/${line} | jq -r '.country_code')"
+		fi
 		# Cross reference country_code to geo.json to return continent and increase value by one
-		curlcont=$(jq -r '.[].'"$curldata" /usr/local/bin/geo.json)
+		[[ ! -z "${curldata}" ]] && curlcont="$(jq -r '.[].'${curldata} /usr/local/bin/geo.json)"
 		if [[ $curlcont == "NA" ]]
 		then
 			contNA=$(($contNA + 1))

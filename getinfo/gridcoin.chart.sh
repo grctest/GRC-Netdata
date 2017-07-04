@@ -15,6 +15,12 @@ load_priority=1
 # collects this information using its internal plugins.
 gridcoin_enabled=1
 
+# constant declarations go outside the functions
+GRCPATH="$(getent passwd gridcoin | cut -d: -f6)/.GridcoinResearch"
+GRCINFO="${GRCPATH}/getinfo.json"
+GRCSTAKING="${GRCPATH}/getstakinginfo.json"
+GRCGEO="${GRCPATH}/geooutput.json"
+
 gridcoin_check() {
 	# this should return:
 	#  - 0 to enable the chart
@@ -59,9 +65,6 @@ EOF
 }
 
 gridcoin_update() {
-        GRCINFO='/home/gridcoin/.GridcoinResearch/getinfo.json'
-        GRCSTAKING='/home/gridcoin/.GridcoinResearch/getstakinginfo.json'
-        GRCGEO='/home/gridcoin/.GridcoinResearch/geooutput.json'
 	connections=$(jq '.connections' $GRCINFO)
         blocks=$(jq '.blocks' $GRCINFO)
         moneysupply=$(jq '.moneysupply' $GRCINFO)
