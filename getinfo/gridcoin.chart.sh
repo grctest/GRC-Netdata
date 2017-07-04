@@ -47,7 +47,6 @@ DIMENSION difficultypow 'PoW' absolute 1 1
 DIMENSION difficultypor 'PoR' absolute 1 1
 CHART Gridcoin.stake_weight '' "Gridcoin stake weight" "# of coins staking" Network_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION net_weight 'Net Weight' absolute 1 1
-DIMENSION dpor_weight 'DPoR Weight' absolute 1 100000000
 CHART Gridcoin.continent '' "Gridcoin client locations" "# of connections from" Locations gridcoin.continent stacked $((load_priority + 1)) $gridcoin_update_every
 DIMENSION northamerica 'N. America' absolute 1 1
 DIMENSION southamerica 'S. America' absolute 1 1
@@ -56,7 +55,7 @@ DIMENSION africa 'Africa' absolute 1 1
 DIMENSION asia 'Asia' absolute 1 1
 DIMENSION oceania 'Oceania' absolute 1 1
 DIMENSION other 'Other' absolute 1 1
-CHART Gridcoin.timeoffset '' "Gridcoin node time offset" "milliseconds" Time_Offset gridcoin.timeoffset line $((load_priority + 1)) $gridcoin_update_every
+CHART Gridcoin.timeoffset '' "Gridcoin node time offset" "minutes" Time_Offset gridcoin.timeoffset line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION timeoffset 'Delta' absolute 1 1
 CHART Gridcoin.transactions '' "Gridcoin transactions" "# of transactions" Transactions gridcoin.transactions line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION currentblocktx 'TX current block' absolute 1 1
@@ -66,10 +65,12 @@ DIMENSION paid_daily 'Paid daily' absolute 1 1
 DIMENSION paid_14days 'Paid 14 days' absolute 1 1
 DIMENSION exp_daily 'Expected daily' absolute 1 1
 DIMENSION exp_14days 'Expected 14 days' absolute 1 1
+DIMENSION rsa_owed 'RSA Owed' absolute 1 1
 CHART Gridcoin.fulfillment '' "Gridcoin fulfillment" "percent" Fulfillment gridcoin.fulfillment line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION fulfillment '% Fulfilled' absolute 1 1
-CHART Gridcoin.magnitude '' "Gridcoin magnitude" "mag" Magnitude gridcoin.magnitude line $((load_priority + 1)) $gridcoin_update_every
+CHART Gridcoin.magnitude '' "Gridcoin magnitude" "mag" Magnitude gridcoin.magnitude stacked $((load_priority + 1)) $gridcoin_update_every
 DIMENSION magnitude 'Magnitude' absolute 1 1
+DIMENSION dpor_weight 'DPoR Weight' absolute 1 100000000
 CHART Gridcoin.magnitude_unit '' "Gridcoin magnitude unit" "coins per unit mag" Magnitude_Unit gridcoin.magnitude_unit line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION magnitude_unit 'Mag Unit' absolute 1 1000
 CHART Gridcoin.lifetime '' "Gridcoin lifetime performance" "GRC" Lifetime gridcoin.lifetime stacked $((load_priority + 1)) $gridcoin_update_every
@@ -88,6 +89,7 @@ gridcoin_update() {
         GRCSTAKING="${GRCPATH}/getstakinginfo.json"
         GRCMINING="${GRCPATH}/getmininginfo.json"
         GRCMAGNITUDE="${GRCPATH}/listmymagnitude.json"
+        GRCRSA="$GRCPATH/listrsaweight.json"
         GRCSB="${GRCPATH}/executesuperblockage.json"
         GRCGEO="${GRCPATH}/geooutput.json"
         connections=$(jq '.connections' $GRCINFO)
@@ -113,6 +115,7 @@ gridcoin_update() {
         paid_fortnightly=$(jq -r '.[1]."Research Payments (14 days)"' $GRCMAGNITUDE)
         exp_daily=$(jq -r '.[1]."Expected Earnings (Daily)"' $GRCMAGNITUDE)
         exp_fortnightly=$(jq -r '.[1]."Expected Earnings (14 days)"' $GRCMAGNITUDE)
+        rsa_owed=$(jq -r '.[1]."RSA Owed"' $GRCRSA)
         fulfillment=$(jq -r '.[1]."Fulfillment %"' $GRCMAGNITUDE)
         magnitude=$(jq -r '.[1]."Magnitude (Last Superblock)"' $GRCMAGNITUDE)
         magnitude_unit=$(jq -r '."Magnitude Unit"' $GRCMINING | sed -r "s/0?\.//")
@@ -141,7 +144,6 @@ SET difficultypor = $difficulty_por
 END
 BEGIN Gridcoin.stake_weight
 SET net_weight = $staking_weight
-SET dpor_weight = $dpor_weight
 END
 BEGIN Gridcoin.continent
 SET northamerica = $geoNA
@@ -164,12 +166,14 @@ SET paid_daily = $paid_daily
 SET paid_14days = $paid_fortnightly
 SET exp_daily = $exp_daily
 SET exp_14days = $exp_fortnightly
+SET rsa_owed = $rsa_owed
 END
 BEGIN Gridcoin.fulfillment
 SET fulfillment = $fulfillment
 END
 BEGIN Gridcoin.magnitude
 SET magnitude = $magnitude
+SET dpor_weight = $dpor_weight
 END
 BEGIN Gridcoin.magnitude_unit
 SET magnitude_unit = $magnitude_unit

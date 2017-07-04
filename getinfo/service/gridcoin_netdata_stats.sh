@@ -8,6 +8,7 @@ then
     "$GRCAPP" getstakinginfo > "$GRCPATH"/getstakinginfo.tmp && mv -f "$GRCPATH"/getstakinginfo.tmp "$GRCPATH"/getstakinginfo.json
     "$GRCAPP" getmininginfo > "$GRCPATH"/getmininginfo.tmp && mv -f "$GRCPATH"/getmininginfo.tmp "$GRCPATH"/getmininginfo.json
     "$GRCAPP" list mymagnitude > "$GRCPATH"/listmymagnitude.tmp && mv -f "$GRCPATH"/listmymagnitude.tmp "$GRCPATH"/listmymagnitude.json
+    "$GRCAPP" list rsaweight > "$GRCPATH"/listrsaweight.tmp && mv -f "$GRCPATH"/listrsaweight.tmp "$GRCPATH"/listrsaweight.json
     "$GRCAPP" execute superblockage > "$GRCPATH"/executesuperblockage.tmp && mv -f "$GRCPATH"/executesuperblockage.tmp "$GRCPATH"/executesuperblockage.json
     else
     exit 1
