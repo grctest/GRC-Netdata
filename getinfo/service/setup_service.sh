@@ -21,7 +21,6 @@ function serviceinstall {
         # Make chart and script executable
         echo Making .sh files executable..
         chmod +x /usr/local/bin/gridcoin_netdata_stats.sh
-        chmod +x /usr/libexec/netdata/charts.d/gridcoin.chart.sh
 
         # Part 2
         #
@@ -41,11 +40,11 @@ function serviceinstall {
         # Copy freegeoip service, binary and license file
         # Service not supported as doesn't run as daemon nor can be forced with systemctl
         echo Downloading freegeoip version 3.2 amd64..
-        wget https://github.com/fiorix/freegeoip/releases/download/v3.2/freegeoip-3.2-linux-amd64.tar.gz
+        curl -L -O https://github.com/fiorix/freegeoip/releases/download/v3.2/freegeoip-3.2-linux-amd64.tar.gz
         echo Extracting freegeoip from archive..
         tar -zxf freegeoip-3.2-linux-amd64.tar.gz freegeoip-3.2-linux-amd64/freegeoip
         echo Making crontab bootup entry under user gridcoin..
-        crontab_contains_freegeoip="$(crontab -l -u gridcoin | grep freegeoip)"
+        crontab_contains_freegeoip="$(crontab -l -u gridcoin | grep -c freegeoip)"
         [[ ${crontab_contains_freegeoip} -lt 1 ]] && crontab -l -u gridcoin | cat - freegeoip.crontab | crontab -u gridcoin -
         echo Copying license file..
         cp ./freegeoip.license /usr/local/bin/freegeoip.license
