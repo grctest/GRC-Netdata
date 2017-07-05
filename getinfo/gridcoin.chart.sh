@@ -38,7 +38,7 @@ DIMENSION connections 'Connected' absolute 1 1
 CHART Gridcoin.blocks '' "Gridcoin blocks" "# of blocks" Blocks gridcoin.blocks line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION blocks 'Blocks' absolute 1 1
 CHART Gridcoin.superblock_age '' "Gridcoin superblock age" "hours" Superblock_Age gridcoin.superblock_age line $((load_priority + 1)) $gridcoin_update_every
-DIMENSION superblock_age 'Hours' absolute 1 3600
+DIMENSION superblock_age 'Age' absolute 1 3600
 CHART Gridcoin.money '' "Gridcoin coin supply" "Total coin supply" Coin_Supply gridcoin.money line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION moneysupply 'Coins' absolute 1 1
 CHART Gridcoin.difficulty '' "Gridcoin difficulties" "Difficulty" Difficulties gridcoin.difficulty line $((load_priority + 1)) $gridcoin_update_every
@@ -47,7 +47,7 @@ DIMENSION difficultypow 'PoW' absolute 1 1
 DIMENSION difficultypor 'PoR' absolute 1 1
 CHART Gridcoin.stake_weight '' "Gridcoin stake weight" "# of coins staking" Network_Weight gridcoin.stake_weight line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION net_weight 'Net Weight' absolute 1 1
-CHART Gridcoin.continent '' "Gridcoin client locations" "# of connections from" Locations gridcoin.continent stacked $((load_priority + 1)) $gridcoin_update_every
+CHART Gridcoin.continent '' "Gridcoin client locations" "# of connections from" Client_Locations gridcoin.continent stacked $((load_priority + 1)) $gridcoin_update_every
 DIMENSION northamerica 'N. America' absolute 1 1
 DIMENSION southamerica 'S. America' absolute 1 1
 DIMENSION europe 'Europe' absolute 1 1
@@ -76,8 +76,10 @@ DIMENSION magnitude_unit 'Mag Unit' absolute 1 1000
 CHART Gridcoin.lifetime '' "Gridcoin lifetime performance" "GRC" Lifetime gridcoin.lifetime stacked $((load_priority + 1)) $gridcoin_update_every
 DIMENSION lifetime_interest 'Interest' absolute 1 1
 DIMENSION lifetime_research 'Research' absolute 1 1
-CHART Gridcoin.lifetime_ppd '' "Gridcoin lifetime payments per day" "GRC" Lifetime_Average gridcoin.lifetime_ppd line $((load_priority + 1)) $gridcoin_update_every
+CHART Gridcoin.lifetime_ppd '' "Gridcoin lifetime payments per day" "GRC" Lifetime_Average_Payments gridcoin.lifetime_ppd line $((load_priority + 1)) $gridcoin_update_every
 DIMENSION lifetime_ppd 'PPD' absolute 1 1
+CHART Gridcoin.neural_network '' "Gridcoin neural network" "weight" Neural_Network gridcoin.neural_network line $((load_priority + 1)) $gridcoin_update_every
+DIMENSION neural_popularity 'Popularity' absolute 1 1
 EOF
 
         return 0
@@ -99,6 +101,7 @@ gridcoin_update() {
         difficulty_pow=$(jq '.difficulty["proof-of-work"]' $GRCMINING)
         difficulty_pos=$(jq '.difficulty["proof-of-stake"]' $GRCMINING)
         difficulty_por=$(jq '.difficulty["proof-of-research"]' $GRCMINING)
+        neural_popularity=$(jq '.NeuralPopularity' $GRCMINING)
         staking_weight=$(jq '.netstakeweight' $GRCSTAKING)
         dpor_weight=$(jq '.weight' $GRCSTAKING)
         geoNA=$(jq -r '.[].contNA' $GRCGEO)
@@ -184,6 +187,9 @@ SET lifetime_research = $lifetime_research
 END
 BEGIN Gridcoin.lifetime_ppd
 SET lifetime_ppd = $lifetime_ppd
+END
+BEGIN Gridcoin.neural_network
+SET neural_popularity = $neural_popularity
 END
 VALUESEOF
 
