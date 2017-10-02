@@ -1,5 +1,5 @@
 [Unit]
-Description=Run the collection script for the gridcoin geographic scrape chart
+Description=Gridcoin geo data collection
 After=netdata.service
 
 [Service]

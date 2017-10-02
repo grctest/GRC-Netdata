@@ -1,5 +1,5 @@
 [Unit]
-Description=Run the collection script for the gridcoin netdata charts
+Description=Gridcoin netdata stats collection
 After=netdata.service
 
 [Service]
